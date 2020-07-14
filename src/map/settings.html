@@ -169,6 +169,38 @@
 
                     <div class="input-group input-group-sm">
                         <div class="input-group-prepend">
+                            <label class="input-group-text" for=chsp-opacity>opacity:</label>
+                        </div>
+                        <select id=chsp-opacity class="custom-select" enabled>
+                            <option value="constant">constant</option>
+                            <option value="active_env">highlight active environments</option>
+                            <option value="selected_env">highlight selected environments</option>
+                            <option value="active_struct">highlight active structures</option>
+                            <option value="selected_struct">highlight selected structures</option>
+                        </select>
+                    </div>
+                    <button class="btn btn-sm btn-secondary chsp-extra-options-btn" type="button" data-toggle="collapse" data-target="#chsp-extra-opacity" id=chsp-opacity-more>
+                        more options
+                    </button>
+                    <div></div>
+                    <div class="collapse chsp-map-extra-options" id=chsp-extra-opacity>
+                      <div class="input-group input-group-sm">
+                          <div class="input-group-prepend">
+                              <label class="input-group-text" for=chsp-opacity-fore>highlighted:</label>
+                          </div>
+                          <input type="range" min=0 max=1 step=0.1 class="form-control custom-range" id=chsp-opacity-fore>
+                      </div>
+                      <div class="input-group input-group-sm">
+                          <div class="input-group-prepend">
+                              <label class="input-group-text" for=chsp-opacity-back>background:</label>
+                          </div>
+                          <input type="range" min=0 max=1 step=0.1 class="form-control custom-range" id=chsp-opacity-back>
+                      </div>
+                    </div>
+                    <div></div>
+
+                    <div class="input-group input-group-sm">
+                        <div class="input-group-prepend">
                             <label class="input-group-text" for=chsp-size>size:</label>
                         </div>
                         <select id=chsp-size class="custom-select">
