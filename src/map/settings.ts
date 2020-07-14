@@ -97,9 +97,8 @@ export interface MapPresets {
     z: Partial<AxisPresets>;
     color: Partial<AxisPresets>;
     opacity: {
-              background: number,
-              foreground?: number,
               mode: string,
+              value: number,
               };
     palette: string;
     symbol: string;
@@ -113,9 +112,8 @@ export interface MapPresets {
 const MAP_DEFAULTS: MapPresets = {
     color: AXIS_DEFAULTS,
     opacity: {
-              background: 1.0,
-              foreground: 1.0,
               mode: '',
+              value: 1.0,
               },
     x: AXIS_DEFAULTS,
     y: AXIS_DEFAULTS,
@@ -137,8 +135,7 @@ export class MapSettings {
     public color: AxisSettings;
     public opacity: {
         mode: HTMLSetting<'string'>,
-        foreground: HTMLSetting<'number'>,
-        background: HTMLSetting<'number'>,
+        value: HTMLSetting<'number'>,
                   };
     public palette: HTMLSetting<'string'>;
     public symbol: HTMLSetting<'string'>;
@@ -181,9 +178,8 @@ export class MapSettings {
         this.z = new AxisSettings(propertiesName.concat(['']));
         this.color = new AxisSettings(propertiesName.concat(['']));
         this.opacity = {
-                  background : new HTMLSetting('number', 1),
-                  foreground : new HTMLSetting('number', 1),
                   mode : new HTMLSetting('string', ''),
+                  value : new HTMLSetting('number', 1),
               };
         this.symbol = new HTMLSetting('string', '');
         this.symbol.validate = settingsValidator(propertiesName.concat(['']), 'symbol');
@@ -228,11 +224,9 @@ export class MapSettings {
         this.color.applyPresets(initial.color);
 
         assert(initial.opacity.mode !== undefined);
-        assert(initial.opacity.foreground !== undefined);
-        assert(initial.opacity.background !== undefined);
+        assert(initial.opacity.value !== undefined);
         this.opacity.mode.value = initial.opacity.mode;
-        this.opacity.foreground.value = initial.opacity.foreground;
-        this.opacity.background.value = initial.opacity.background;
+        this.opacity.value.value = initial.opacity.value;
 
         this.symbol.value = initial.symbol;
         this.palette.value = initial.palette;
@@ -252,9 +246,8 @@ export class MapSettings {
         return {
             color: this.color.dumpPresets(),
             opacity: {
-                background: this.opacity.background.value,
-                foreground: this.opacity.foreground.value,
                 mode: this.opacity.mode.value,
+                value: this.opacity.value.value,
             },
             x: this.x.dumpPresets(),
             y: this.y.dumpPresets(),
@@ -391,9 +384,8 @@ export class MapSettings {
         this.palette.bind(selectPalette, 'value');
 
         // ======= opacities
-        this.opacity.mode.bind('chsp-opacity', 'value');
-        this.opacity.foreground.bind('chsp-opacity-fore', 'value');
-        this.opacity.background.bind('chsp-opacity-back', 'value');
+        this.opacity.mode.bind('chsp-opacity-mode', 'value');
+        this.opacity.value.bind('chsp-opacity', 'value');
 
         // ======= marker symbols
         const selectSymbolProperty = getByID<HTMLSelectElement>('chsp-symbol');

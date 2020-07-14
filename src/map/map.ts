@@ -404,7 +404,6 @@ export class PropertiesMap {
 
     /** Forward to Ploty.restyle */
     private _restyle(data: Partial<Data>, traces?: number | number[]) {
-        console.log(data)
         Plotly.restyle(this._plot, data, traces).catch((e) => setTimeout(() => { throw e; }));
     }
 
@@ -598,17 +597,13 @@ export class PropertiesMap {
         };
 
         this._settings.opacity.mode.onchange = () => {
-            this._restyle({'marker.opacity':  this._settings.opacity.background.value}, 0);
-            this._restyle({'marker.opacity':  this._settings.opacity.foreground.value}, 1);
+            this._restyle({'marker.opacity':  this._settings.opacity.value.value}, 1);
         };
 
-        this._settings.opacity.background.onchange = () => {
-            this._restyle({'marker.opacity':  this._settings.opacity.background.value}, 0);
+        this._settings.opacity.value.onchange = () => {
+            this._restyle({'marker.opacity':  this._settings.opacity.value.value}, 0);
         };
 
-        this._settings.opacity.foreground.onchange = () => {
-            this._restyle({'marker.opacity':  this._settings.opacity.foreground.value}, 1);
-        };
         // ======= color palette
         this._settings.palette.onchange = () => {
             this._relayout({
@@ -987,41 +982,6 @@ export class PropertiesMap {
                     selected.push(4000);
                 } else {
                     selected.push(2000);
-                }
-            }
-        }
-        return this._selectTrace<number | number[]>(values, selected, trace);
-    }
-
-    private _opacities(trace?: number): Array<number | number[]> {
-        // Transform the linear value from the slider into a logarithmic scale
-
-        const shown = new Array(this._xValues(trace).length);
-        for (let i = 0; i < shown.length; i++) {shown[i] = false; }
-        let selectedOpacity = this._settings.opacity.background.value;
-        let activeOpacity = this._settings.opacity.foreground.value;
-        switch (this._settings.opacity.mode.value) {
-          case 'selected_env':
-            break;
-          case 'active_env':
-            selectedOpacity = this._settings.opacity.background.value;
-            break;
-          default:
-        }
-
-        const values = shown.map((v: boolean) => {
-          if (v) {
-            return this._settings.opacity.foreground.value;
-          } else {return this._settings.opacity.background.value; }
-        });
-
-        const selected = [];
-        if (this._is3D()) {
-            for (const guid of this._selected.keys()) {
-                if (guid === this._active) {
-                    selected.push(activeOpacity);
-                } else {
-                    selected.push(selectedOpacity);
                 }
             }
         }
