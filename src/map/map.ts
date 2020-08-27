@@ -959,6 +959,7 @@ export class PropertiesMap {
         this._relayout(({
             // change colorbar length to accomodate for symbols legend
             'coloraxis.colorbar.len': this._colorbarLen(),
+            'coloraxis.colorscale': this._options.colorScale(),
             // Carry over axis types
             'scene.xaxis.type': this._options.x.scale.value as Plotly.AxisType,
             'scene.yaxis.type': this._options.y.scale.value as Plotly.AxisType,
@@ -1002,6 +1003,7 @@ export class PropertiesMap {
         this._relayout(({
             // change colorbar length to accomodate for symbols legend
             'coloraxis.colorbar.len': this._colorbarLen(),
+            'coloraxis.colorscale': this._options.colorScale(),
             // Carry over axis types
             'xaxis.type': this._options.x.scale.value as Plotly.AxisType,
             'yaxis.type': this._options.y.scale.value as Plotly.AxisType,
