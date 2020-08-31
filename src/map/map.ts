@@ -340,7 +340,7 @@ export class PropertiesMap {
         // ======= x axis settings
         this._options.x.property.onchange = () => {
             const values = this._coordinates(this._options.x) as number[][];
-            this._restyle({ x: values }, [0, 1]);
+            this._restyle({ x: values }, [0, 1, 2]);
             this._relayout(({
                 'scene.xaxis.title': this._options.x.property.value,
                 'xaxis.title': this._options.x.property.value,
@@ -384,7 +384,7 @@ export class PropertiesMap {
         // ======= y axis settings
         this._options.y.property.onchange = () => {
             const values = this._coordinates(this._options.y) as number[][];
-            this._restyle({ y: values }, [0, 1]);
+            this._restyle({ y: values }, [0, 1, 2]);
             this._relayout(({
                 'scene.yaxis.title': this._options.y.property.value,
                 'yaxis.title': this._options.y.property.value,
@@ -419,7 +419,7 @@ export class PropertiesMap {
             }
 
             const values = this._coordinates(this._options.z);
-            this._restyle({ z: values } as Data, [0, 1]);
+            this._restyle({ z: values } as Data, [0, 1, 2]);
             this._relayout(({
                 'scene.zaxis.title': this._options.z.property.value,
             } as unknown) as Layout);
@@ -442,6 +442,7 @@ export class PropertiesMap {
             this._options.color.enable();
             this._colorReset.disabled = false;
 
+            // todo might set wrong range
             const values = this._colors(0)[0] as number[];
             const { min, max } = arrayMaxMin(values);
 
@@ -460,6 +461,7 @@ export class PropertiesMap {
                 this._options.color.enable();
                 this._colorReset.disabled = false;
 
+                // todo
                 const values = this._colors(0)[0] as number[];
                 const { min, max } = arrayMaxMin(values);
 
@@ -510,6 +512,7 @@ export class PropertiesMap {
         this._options.color.max.onchange = colorRangeChange;
 
         this._colorReset.onclick = () => {
+            // todo
             const values = this._colors(0)[0] as number[];
             const { min, max } = arrayMaxMin(values);
             this._options.color.min.value = min;
@@ -529,9 +532,48 @@ export class PropertiesMap {
             } as unknown) as Layout);
         };
 
+        // ======= opacity
+        this._options.opacity.mode.onchange = () => {
+            if (this._options.opacity.mode.value === 'filter') {
+              this._options.opacity.filter.property.enable()
+              this._options.opacity.filter.cutoff.enable()
+              this._options.opacity.filter.operator.enable()
+            } else {
+              this._options.opacity.filter.property.disable()
+              this._options.opacity.filter.cutoff.disable()
+              this._options.opacity.filter.operator.disable()
+            }
+            if (this._options.opacity.mode.value === 'constant') {
+                this._options.opacity.minimum.disable()
+            } else {
+                this._options.opacity.minimum.enable()
+            }
+            this._updateOpacity();
+        };
+
+        this._options.opacity.filter.property.onchange = () => {
+          this._updateOpacity();
+        };
+
+        this._options.opacity.filter.operator.onchange = () => {
+          this._updateOpacity();
+        };
+
+        this._options.opacity.filter.cutoff.onchange = () => {
+          this._updateOpacity();
+        };
+
+        this._options.opacity.minimum.onchange = () => {
+          this._updateOpacity();
+        };
+
+        this._options.opacity.maximum.onchange = () => {
+          this._updateOpacity();
+        };
+
         // ======= markers symbols
         this._options.symbol.onchange = () => {
-            this._restyle({ 'marker.symbol': this._symbols() }, [0, 1]);
+            this._restyle({ 'marker.symbol': this._symbols() }, [0, 1, 2]);
 
             this._restyle(({
                 name: this._legendNames(),
@@ -553,18 +595,22 @@ export class PropertiesMap {
                 this._options.size.reverse.disable();
             }
             this._restyle({ 'marker.size': this._sizes(0) } as Data, 0);
+            this._restyle({ 'marker.size': this._sizes(2) } as Data, 2);
         };
 
         this._options.size.factor.onchange = () => {
             this._restyle({ 'marker.size': this._sizes(0) } as Data, 0);
+            this._restyle({ 'marker.size': this._sizes(2) } as Data, 2);
         };
 
         this._options.size.property.onchange = () => {
             this._restyle({ 'marker.size': this._sizes(0) } as Data, 0);
+            this._restyle({ 'marker.size': this._sizes(2) } as Data, 2);
         };
 
         this._options.size.reverse.onchange = () => {
             this._restyle({ 'marker.size': this._sizes(0) } as Data, 0);
+            this._restyle({ 'marker.size': this._sizes(2) } as Data, 2);
         };
     }
 
@@ -585,7 +631,7 @@ export class PropertiesMap {
 
         // The main trace, containing default data
         const main = {
-            name: '',
+            name: 'main',
             type: type,
 
             x: x[0],
@@ -600,9 +646,9 @@ export class PropertiesMap {
                     color: lineColors[0],
                     width: 1,
                 },
-                // prevent plolty from messing with opacity when doing bubble
+                // prevent plotly from messing with opacity when doing bubble
                 // style charts (different sizes for each point)
-                opacity: 1,
+                opacity: this._options.opacity.maximum.value,
                 size: sizes[0],
                 sizemode: 'area',
                 symbol: symbols[0],
@@ -638,7 +684,35 @@ export class PropertiesMap {
             showlegend: false,
         };
 
-        const traces = [main as Data, selected as Data];
+        // The background trace, containing default data
+        const background = {
+            name: 'background',
+            type: type,
+
+            x: x[2],
+            y: y[2],
+            z: z[2],
+
+            hovertemplate: this._options.hovertemplate(),
+            marker: {
+                color: colors[2],
+                coloraxis: 'coloraxis',
+                line: {
+                    color: lineColors[2],
+                    width: 1,
+                },
+                // prevent plotly from messing with opacity when doing bubble
+                // style charts (different sizes for each point)
+                opacity: this._options.opacity.minimum.value,
+                size: sizes[2],
+                sizemode: 'area',
+                symbol: symbols[2],
+            },
+            mode: 'markers',
+            showlegend: false,
+        };
+
+        const traces = [main as Data, selected as Data, background as Data];
 
         const legendNames = this._legendNames().slice(2);
         const showlegend = this._showlegend().slice(2);
@@ -757,7 +831,7 @@ export class PropertiesMap {
     private _coordinates(axis: AxisOptions, trace?: number): Array<undefined | number[]> {
         // this happen for the z axis in 2D mode
         if (axis.property.value === '') {
-            return this._selectTrace(undefined, undefined, trace);
+            return this._selectTrace(undefined, undefined, trace, undefined);
         }
 
         const values = this._property(axis.property.value).values;
@@ -771,6 +845,8 @@ export class PropertiesMap {
                 selected.push(NaN);
             }
         }
+
+
         return this._selectTrace<number[]>(values, selected, trace);
     }
 
@@ -885,15 +961,23 @@ export class PropertiesMap {
      * Select either main, selected or both depending on `trace`, and return
      * them in a mode usable with `Plotly.restyle`/[[PropertiesMap._restyle]]
      */
-    private _selectTrace<T>(main: T, selected: T, trace?: number): T[] {
-        if (trace === 0) {
-            return [main];
-        } else if (trace === 1) {
-            return [selected];
-        } else if (trace === undefined) {
-            return [main, selected];
+    private _selectTrace<T>(main: T, selected: T, trace?: number | number[], background?: T): T[] {
+        if (background === undefined) {
+          const filtered_values = this._filter(main) as T[];
+          main = filtered_values[0];
+          background = filtered_values[0];
+        }
+
+        if(trace === undefined) {
+          return [main, selected, background];
+        } else if (typeof trace === 'number') {
+          return [[main, selected, background][trace]];
         } else {
-            throw Error('internal error: invalid trace number');
+          var traces = [];
+          for (var i of trace) {
+            traces.push([main, selected, background][i]);
+          }
+          return traces
         }
     }
 
@@ -953,7 +1037,7 @@ export class PropertiesMap {
                 'marker.size': this._sizes(),
                 'marker.sizemode': 'area',
             } as Data,
-            [0, 1]
+            [0, 1, 2]
         );
 
         this._relayout(({
@@ -997,7 +1081,7 @@ export class PropertiesMap {
                 // size change from 2D to 3D
                 'marker.size': this._sizes(),
             } as Data,
-            [0, 1]
+            [0, 1, 2]
         );
 
         this._relayout(({
@@ -1120,5 +1204,52 @@ export class PropertiesMap {
             return this._checkBounds(z, 'z', buffer) && check;
         }
         return check;
+    }
+
+    private _filter<T>(objectToFilter: T) {
+      const opacityMode = this._options.opacity.mode.value;
+
+      if(opacityMode === 'constant') {
+        return [objectToFilter, undefined]
+      } else if(opacityMode === 'filter') {
+        if(Array.isArray(objectToFilter)) {
+          const values = this._property(this._options.opacity.filter.property.value).values;
+          assert(objectToFilter.length === values.length)
+
+          const operator = this._options.opacity.filter.operator.value;
+          const cutoff = this._options.opacity.filter.cutoff.value;
+
+          var filtered_trace;
+          var unfiltered_trace;
+          console.log(operator)
+
+          if(operator === '>') {
+            filtered_trace = objectToFilter.filter((x,i) => (values[i] > cutoff));
+            unfiltered_trace = objectToFilter.filter((x,i) => (values[i] <= cutoff));
+          } else if (operator === "<") {
+            filtered_trace = objectToFilter.filter((x,i) => (values[i] < cutoff));
+            unfiltered_trace = objectToFilter.filter((x,i) => (values[i] >= cutoff));
+          } else if (operator === "=") {
+            filtered_trace = objectToFilter.filter((x,i) => (values[i] === cutoff));
+            unfiltered_trace = objectToFilter.filter((x,i) => (values[i] !== cutoff));
+          } else {
+            throw Error('No other filters are supported');
+          }
+
+          return [unfiltered_trace, filtered_trace];
+        } else {
+          return [objectToFilter, objectToFilter];
+        }
+      }
+    }
+
+    private _updateTraces() {
+
+    }
+    private _updateOpacity() {
+      this._restyle({'opacity': this._options.opacity.minimum.value}, [2]);
+      this._restyle({'opacity': this._options.opacity.maximum.value}, [1]);
+      this._restyle({'opacity': this._options.opacity.maximum.value}, [0]);
+
     }
 }

@@ -64,6 +64,16 @@ export class MapOptions extends OptionsGroup {
     public z: AxisOptions;
     public color: AxisOptions;
     public palette: HTMLOption<'string'>;
+    public opacity: {
+        filter: {
+          property: HTMLOption<'string'>;
+          operator: HTMLOption<'string'>;
+          cutoff: HTMLOption<'number'>;
+        };
+        mode: HTMLOption<'string'>;
+        maximum: HTMLOption<'number'>;
+        minimum: HTMLOption<'number'>;
+    };
     public symbol: HTMLOption<'string'>;
     public size: {
         factor: HTMLOption<'number'>;
@@ -107,12 +117,37 @@ export class MapOptions extends OptionsGroup {
         this.palette = new HTMLOption('string', 'inferno');
         this.palette.validate = optionValidator(Object.keys(COLOR_MAPS), 'palette');
 
+        this.opacity = {
+            filter: {
+              property: new HTMLOption('string', propertiesName[0]),
+              operator: new HTMLOption('string', '>'),
+              cutoff: new HTMLOption('number', 0.0)
+            },
+            mode: new HTMLOption('string', 'constant'),
+            maximum: new HTMLOption('number', 1.0),
+            minimum: new HTMLOption('number', 1.0),
+        };
+
+        this.opacity.mode.validate = optionValidator(['constant', 'filter', 'structure'], 'opacity')
+        this.opacity.minimum.validate = (value) => {
+            if (value < 0 || value > this.opacity.maximum.value) {
+                throw Error(`opacity must be between 0 and ${this.opacity.maximum.value}, got ${value}`);
+            }
+        };
+        this.opacity.maximum.validate = (value) => {
+            if (value > 1 || value < this.opacity.minimum.value) {
+                throw Error(`opacity must be between ${this.opacity.minimum.value} and 1, got ${value}`);
+            }
+        };
+        this.opacity.filter.property.validate = optionValidator(propertiesName, 'size');
+
         this.size = {
             factor: new HTMLOption('number', 50),
             mode: new HTMLOption('string', 'constant'),
             property: new HTMLOption('string', propertiesName[0]),
             reverse: new HTMLOption('boolean', false),
         };
+
         this.size.property.validate = optionValidator(propertiesName, 'size');
         this.size.factor.validate = (value) => {
             if (value < 1 || value > 100) {
@@ -386,6 +421,21 @@ export class MapOptions extends OptionsGroup {
             selectPalette.options.add(new Option(key, key));
         }
         this.palette.bind(selectPalette, 'value');
+
+        // ======= marker opacity
+        const selectOpacity = getByID<HTMLSelectElement>('chsp-opacity-mode');
+        this.opacity.mode.bind(selectOpacity, 'value');
+        this.opacity.maximum.bind('chsp-opacity-maximum', 'value');
+        this.opacity.minimum.bind('chsp-opacity-minimum', 'value');
+        this.opacity.filter.property.bind('chsp-opacity-property', 'value');
+        const selectOpacityProperty = getByID<HTMLSelectElement>('chsp-opacity-property');
+        selectOpacityProperty.options.length = 0;
+        for (const key in properties) {
+            selectOpacityProperty.options.add(new Option(key, key));
+        }
+        this.opacity.filter.property.bind(selectOpacityProperty, 'value');
+        this.opacity.filter.cutoff.bind('chsp-opacity-cutoff', 'value');
+        this.opacity.filter.operator.bind('chsp-opacity-operator', 'value');
 
         // ======= marker symbols
         const selectSymbolProperty = getByID<HTMLSelectElement>('chsp-symbol');
