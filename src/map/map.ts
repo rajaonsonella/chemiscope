@@ -453,7 +453,7 @@ export class PropertiesMap {
             this._colorReset.disabled = false;
 
             // todo might set wrong range
-            const values = this._colors(0)[0] as number[];
+            const values = this._colors()[0] as number[];
             const { min, max } = arrayMaxMin(values);
 
             this._options.color.min.value = min;
@@ -498,11 +498,7 @@ export class PropertiesMap {
             this._restyle(
                 {
                     hovertemplate: this._options.hovertemplate(),
-<<<<<<< HEAD
-                    'marker.color': this._colors(0),
-=======
                     'marker.color': this._colors(),
->>>>>>> 3aae5e4... Updates to call of '_colors'
                 } as Data,
                 [0, 1, 2]
             );
@@ -725,24 +721,23 @@ export class PropertiesMap {
             name: 'background',
             type: type,
 
-            x: x[1],
-            y: y[1],
-            z: z[1],
+            x: [NaN],
+            y: [NaN],
+            z: [NaN],
 
             hovertemplate: this._options.hovertemplate(),
             marker: {
-                color: colors[1],
+                color: [NaN],
                 coloraxis: 'coloraxis',
                 line: {
-                    color: lineColors[1],
+                    color: [NaN],
                     width: 1,
                 },
                 // prevent plotly from messing with opacity when doing bubble
                 // style charts (different sizes for each point)
                 opacity: this._options.opacity.minimum.value,
-                size: sizes[1],
+                size: [NaN],
                 sizemode: 'area',
-                symbol: symbols[1],
             },
             mode: 'markers',
             showlegend: false,
