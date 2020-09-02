@@ -349,7 +349,7 @@ export class PropertiesMap {
     private _connectSettings() {
         // ======= x axis settings
         this._options.x.property.onchange = () => {
-            const values = this._coordinates(this._options.x) as number[][];
+            const values = this._filter<number[]>(this._coordinates(this._options.x)) as number[][];
             this._restyle({ x: values }, [0, 1, 2]);
             this._relayout(({
                 'scene.xaxis.title': this._options.x.property.value,
@@ -393,7 +393,7 @@ export class PropertiesMap {
 
         // ======= y axis settings
         this._options.y.property.onchange = () => {
-            const values = this._coordinates(this._options.y) as number[][];
+            const values = this._filter<number[]>(this._coordinates(this._options.y)) as number[][];
             this._restyle({ y: values }, [0, 1, 2]);
             this._relayout(({
                 'scene.yaxis.title': this._options.y.property.value,
@@ -428,7 +428,7 @@ export class PropertiesMap {
                 }
             }
 
-            const values = this._coordinates(this._options.z);
+            const values = this._filter<number[]>(this._coordinates(this._options.z));
             this._restyle({ z: values } as Data, [0, 1, 2]);
             this._relayout(({
                 'scene.zaxis.title': this._options.z.property.value,
@@ -570,9 +570,9 @@ export class PropertiesMap {
                     'marker.color': this._colors(),
                     'marker.size': this._sizes(),
                     'marker.symbol': this._symbols(),
-                    x: this._coordinates(this._options.x),
-                    y: this._coordinates(this._options.y),
-                    z: this._coordinates(this._options.z),
+                    x: this._filter<number[]>(this._coordinates(this._options.x)),
+                    y: this._filter<number[]>(this._coordinates(this._options.y)),
+                    z: this._filter<number[]>(this._coordinates(this._options.z)),
                 } as Data,
                 [0, 1, 2]
             );
@@ -588,9 +588,9 @@ export class PropertiesMap {
                   'marker.color': this._colors(),
                   'marker.size': this._sizes(),
                   'marker.symbol': this._symbols(),
-                  x: this._coordinates(this._options.x),
-                  y: this._coordinates(this._options.y),
-                  z: this._coordinates(this._options.z),
+                  x: this._filter<number[]>(this._coordinates(this._options.x)),
+                  y: this._filter<number[]>(this._coordinates(this._options.y)),
+                  z: this._filter<number[]>(this._coordinates(this._options.z)),
               } as Data,
               [0, 1, 2]
           );
@@ -603,9 +603,9 @@ export class PropertiesMap {
                   'marker.color': this._colors(),
                   'marker.size': this._sizes(),
                   'marker.symbol': this._symbols(),
-                  x: this._coordinates(this._options.x),
-                  y: this._coordinates(this._options.y),
-                  z: this._coordinates(this._options.z),
+                  x: this._filter<number[]>(this._coordinates(this._options.x)),
+                  y: this._filter<number[]>(this._coordinates(this._options.y)),
+                  z: this._filter<number[]>(this._coordinates(this._options.z)),
               } as Data,
               [0, 1, 2]
           );
@@ -618,9 +618,9 @@ export class PropertiesMap {
                   'marker.color': this._colors(),
                   'marker.size': this._sizes(),
                   'marker.symbol': this._symbols(),
-                  x: this._coordinates(this._options.x),
-                  y: this._coordinates(this._options.y),
-                  z: this._coordinates(this._options.z),
+                  x: this._filter<number[]>(this._coordinates(this._options.x)),
+                  y: this._filter<number[]>(this._coordinates(this._options.y)),
+                  z: this._filter<number[]>(this._coordinates(this._options.z)),
               } as Data,
               [0, 1, 2]
           );
@@ -686,9 +686,9 @@ export class PropertiesMap {
         const sizes = this._sizes();
         const symbols = this._symbols();
 
-        const x = this._coordinates(this._options.x);
-        const y = this._coordinates(this._options.y);
-        const z = this._coordinates(this._options.z);
+        const x = this._filter<number[]>(this._coordinates(this._options.x));
+        const y = this._filter<number[]>(this._coordinates(this._options.y));
+        const z = this._filter<number[]>(this._coordinates(this._options.z));
 
         const type = this._is3D() ? 'scatter3d' : 'scattergl';
 
@@ -891,18 +891,15 @@ export class PropertiesMap {
      * @param  trace  plotly trace for which we require coordinate
      * @return        data usable with Plotly.restyle
      */
-    private _coordinates(axis: AxisOptions, trace?: number): Array<number[]> | Array<number>{
+    private _coordinates(axis: AxisOptions): number[]{
         // this happen for the z axis in 2D mode
         if (axis.property.value === '') {
-          return this._filter<Array<number>>([NaN], trace);
+          return [NaN]
         } else {
-          if(this._is3D()){
-            return this._filter<Array<number>>(this._property(axis.property.value).values, trace);
-          } else {
-            return this._filter<Array<number>>(this._property(axis.property.value).values, trace, [NaN]);
-          }
+          return this._property(axis.property.value).values;
         }
     }
+
 
     /**
      * Get the color values to use with the given plotly `trace`, or all of
@@ -1149,15 +1146,15 @@ export class PropertiesMap {
                     'marker.color': this._colors()[2],
                     'marker.size': this._sizes()[2],
                     'marker.symbol': this._symbols()[2],
-                    x: this._coordinates(this._options.x, 2),
-                    y: this._coordinates(this._options.y, 2),
-                    z: this._coordinates(this._options.z, 2),
+                    x: this._filter<number[]>(this._coordinates(this._options.x), 2),
+                    y: this._filter<number[]>(this._coordinates(this._options.y), 2),
+                    z: this._filter<number[]>(this._coordinates(this._options.z), 2),
                 } as Data,
                 2
             );
         } else {
-            const allX = this._coordinates(this._options.x, 0) as number[];
-            const allY = this._coordinates(this._options.y, 0) as number[];
+            const allX = this._coordinates(this._options.x) as number[];
+            const allY = this._coordinates(this._options.y) as number[];
             const plotWidth = this._plot.getBoundingClientRect().width;
 
             for (const datum of data) {
