@@ -841,9 +841,13 @@ export class PropertiesMap {
             if (event.event && event.event.detail === 2) {
                 return;
             }
-
-            let environment = event.points[0].pointNumber;
-            if (this._is3D() && event.points[0].data.name === 'selected') {
+            let environment;
+            const trace = event.points[0].data.name;
+            if(trace === 'background'){
+              environment = this._backgroundPoints[event.points[0].pointNumber];
+            } else if (trace === 'main') {
+              environment = this._mainPoints[event.points[0].pointNumber];
+            } else if (trace === 'selected' && this._is3D()) {
                 // if someone has clicked on a selection marker, set to active
                 // this is only used in 3D mode, since in 2D the HTML marker
                 // directly deal with the click event
@@ -859,10 +863,12 @@ export class PropertiesMap {
                 }
             }
 
-            const indexes = this._indexer.from_environment(environment);
+            if (environment !== undefined ) {
+              const indexes = this._indexer.from_environment(environment);
 
-            this.select(indexes);
-            this.onselect(indexes);
+              this.select(indexes);
+              this.onselect(indexes);
+            }
         });
 
         this._plot.on('plotly_afterplot', () => this._afterplot());
