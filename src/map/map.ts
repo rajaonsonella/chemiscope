@@ -961,19 +961,16 @@ export class PropertiesMap {
      * Get the values to use as marker symbol with the given plotly `trace`, or
      * all of them if `trace === undefined`.
      */
-    private _symbols(trace?: number): Array<string | string[] | number[]> {
+
+     private _symbols(trace?: number): Array<string | string[] | number[]> {
         if (this._options.symbol.value === '') {
             // default to 0 (i.e. circles)
-            return this._selectTrace<string | string[]>('circle', 'circle', trace);
+             return this._filter<string>('circle', trace) as string[];
         }
 
         const property = this._property(this._options.symbol.value);
         const symbols = this._options.getSymbols(property);
-        const selected = [];
-        for (const data of this._selected.values()) {
-            selected.push(symbols[data.current]);
-        }
-        return this._selectTrace<typeof symbols>(symbols, selected as typeof symbols, trace);
+        return this._filter<typeof symbols>(symbols, trace) as Array<typeof symbols>;
     }
 
     /** Should we show the legend for the various symbols used? */
