@@ -1019,30 +1019,6 @@ export class PropertiesMap {
         }
     }
 
-    /**
-     * Select either main, selected or both depending on `trace`, and return
-     * them in a mode usable with `Plotly.restyle`/[[PropertiesMap._restyle]]
-     */
-    private _selectTrace<T>(main: T, selected: T, trace?: number | number[], background?: T): T[] {
-        if (background === undefined) {
-          const filtered_values = this._filter(main) as T[];
-          main = filtered_values[0];
-          background = filtered_values[0];
-        }
-
-        if(trace === undefined) {
-          return [main, selected, background];
-        } else if (typeof trace === 'number') {
-          return [[main, selected, background][trace]];
-        } else {
-          var traces = [];
-          for (var i of trace) {
-            traces.push([main, selected, background][i]);
-          }
-          return traces
-        }
-    }
-
     /** Get the length of the colorbar to accomodate for the legend */
     private _colorbarLen(): number {
         /// Heigh of a legend item in plot unit
@@ -1303,13 +1279,32 @@ export class PropertiesMap {
       this._backgroundPoints = bP;
     }
 
-    private _updateTraces() {
+    // this is a *new* version of _selectTrace which not only returns the object
+    // for the specific trace, but avoids unnecessary computation
+    private _filter<T>(objectToFilter: T, trace?: number, selectedObjects?: T): T | T[] {
+      var mainObjects: T = objectToFilter;
+      var backgroundObjects: T = objectToFilter;
 
-    }
-    private _updateOpacity() {
-      this._restyle({'opacity': this._options.opacity.minimum.value}, [2]);
-      this._restyle({'opacity': this._options.opacity.maximum.value}, [1]);
-      this._restyle({'opacity': this._options.opacity.maximum.value}, [0]);
+      if(selectedObjects === undefined) {
+        if((trace === undefined || trace === 2) && Array.isArray(objectToFilter) && objectToFilter.length !== 1) {
+          selectedObjects = Array.from(this._selected.values()).map((data) => objectToFilter[data.current]) as unknown as T;
+        } else {selectedObjects = objectToFilter;}
+      }
+      if(Array.isArray(objectToFilter) && objectToFilter.length !== 1) {
+        if(trace === undefined || trace === 0){
+          mainObjects = this._mainPoints.map((i) => objectToFilter[i]) as unknown as T;
+        }
+        if (trace === undefined || trace === 1) {
+          backgroundObjects = this._backgroundPoints.map((i) => objectToFilter[i]) as unknown as T;
+        }
+        if ((trace === undefined || trace === 2)  && selectedObjects === undefined) {
 
+        }
+      }
+      if (trace === undefined) {
+        return [mainObjects, backgroundObjects, selectedObjects] as T[];
+      } else {
+        return [mainObjects, backgroundObjects, selectedObjects][trace] as T;
+      }
     }
 }
