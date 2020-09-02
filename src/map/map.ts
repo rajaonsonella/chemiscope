@@ -263,7 +263,7 @@ export class PropertiesMap {
         data.activate();
 
         if (this._is3D()) {
-            this._restyle({ 'marker.size': this._sizes(1) } as Data, 1);
+            this._restyle({ 'marker.size': this._sizes()[2] } as Data, 2);
         }
     }
 
@@ -719,6 +719,34 @@ export class PropertiesMap {
             showlegend: false,
         };
 
+        // The background trace, containing default data
+        const background = {
+            name: 'background',
+            type: type,
+
+            x: x[1],
+            y: y[1],
+            z: z[1],
+
+            hovertemplate: this._options.hovertemplate(),
+            marker: {
+                color: colors[1],
+                coloraxis: 'coloraxis',
+                line: {
+                    color: lineColors[1],
+                    width: 1,
+                },
+                // prevent plotly from messing with opacity when doing bubble
+                // style charts (different sizes for each point)
+                opacity: this._options.opacity.minimum.value,
+                size: sizes[1],
+                sizemode: 'area',
+                symbol: symbols[1],
+            },
+            mode: 'markers',
+            showlegend: false,
+        };
+
         // Create a second trace to store the last clicked point, in order to
         // display it on top of the main plot with different styling. This is
         // only used in 3D mode, since it is way slower than moving
@@ -733,48 +761,20 @@ export class PropertiesMap {
 
             hoverinfo: 'none',
             marker: {
-                color: colors[1],
-                line: {
-                    color: lineColors[1],
-                    width: 2,
-                },
-                opacity: 1,
-                size: sizes[1],
-                sizemode: 'area',
-            },
-            mode: 'markers',
-            showlegend: false,
-        };
-
-        // The background trace, containing default data
-        const background = {
-            name: 'background',
-            type: type,
-
-            x: x[2],
-            y: y[2],
-            z: z[2],
-
-            hovertemplate: this._options.hovertemplate(),
-            marker: {
                 color: colors[2],
-                coloraxis: 'coloraxis',
                 line: {
                     color: lineColors[2],
-                    width: 1,
+                    width: 2,
                 },
-                // prevent plotly from messing with opacity when doing bubble
-                // style charts (different sizes for each point)
-                opacity: this._options.opacity.minimum.value,
+                opacity: this._options.opacity.maximum.value,
                 size: sizes[2],
                 sizemode: 'area',
-                symbol: symbols[2],
             },
             mode: 'markers',
             showlegend: false,
         };
 
-        const traces = [main as Data, selected as Data, background as Data];
+        const traces = [main as Data, background as Data, selected as Data];
 
         const legendNames = this._legendNames().slice(2);
         const showlegend = this._showlegend().slice(2);
@@ -1070,7 +1070,7 @@ export class PropertiesMap {
                 // line width set to 0 ¯\_(ツ)_/¯
                 // https://github.com/plotly/plotly.js/issues/4111
                 'marker.line.color': this._lineColors(),
-                'marker.line.width': [1, 2],
+                'marker.line.width': [1, 1, 2],
                 // size change from 2D to 3D
                 'marker.size': this._sizes(),
                 'marker.sizemode': 'area',
@@ -1081,7 +1081,6 @@ export class PropertiesMap {
         this._relayout(({
             // change colorbar length to accomodate for symbols legend
             'coloraxis.colorbar.len': this._colorbarLen(),
-            'coloraxis.colorscale': this._options.colorScale(),
             // Carry over axis types
             'scene.xaxis.type': this._options.x.scale.value as Plotly.AxisType,
             'scene.yaxis.type': this._options.y.scale.value as Plotly.AxisType,
@@ -1115,7 +1114,7 @@ export class PropertiesMap {
                 // transparency messes with depth sorting in 3D mode
                 // https://github.com/plotly/plotly.js/issues/4111
                 'marker.line.color': this._lineColors(),
-                'marker.line.width': [1, 0],
+                'marker.line.width': [1, 1, 0],
                 // size change from 2D to 3D
                 'marker.size': this._sizes(),
             } as Data,
@@ -1125,7 +1124,6 @@ export class PropertiesMap {
         this._relayout(({
             // change colorbar length to accomodate for symbols legend
             'coloraxis.colorbar.len': this._colorbarLen(),
-            'coloraxis.colorscale': this._options.colorScale(),
             // Carry over axis types
             'xaxis.type': this._options.x.scale.value as Plotly.AxisType,
             'yaxis.type': this._options.y.scale.value as Plotly.AxisType,
@@ -1167,14 +1165,14 @@ export class PropertiesMap {
             data.forEach((d) => d.toggleVisible(false));
             this._restyle(
                 {
-                    'marker.color': this._colors(1),
-                    'marker.size': this._sizes(1),
-                    'marker.symbol': this._symbols(1),
-                    x: this._coordinates(this._options.x, 1),
-                    y: this._coordinates(this._options.y, 1),
-                    z: this._coordinates(this._options.z, 1),
+                    'marker.color': this._colors()[2],
+                    'marker.size': this._sizes()[2],
+                    'marker.symbol': this._symbols()[2],
+                    x: this._coordinates(this._options.x, 2),
+                    y: this._coordinates(this._options.y, 2),
+                    z: this._coordinates(this._options.z, 2),
                 } as Data,
-                1
+                2
             );
         } else {
             const allX = this._coordinates(this._options.x, 0) as number[][];
