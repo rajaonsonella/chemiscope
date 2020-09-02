@@ -1246,12 +1246,12 @@ export class PropertiesMap {
         // don't know if there's a better way to do this
         const nIdx = this._property(this._options.opacity.filter.property.value).values.length;
         const allIdx = [];
-        for (var i = 0; i < nIdx; i++) {
+        for (let i = 0; i < nIdx; i++) {
             allIdx.push(i);
         }
 
-        var mP: Array<number> = allIdx;
-        var bP: Array<number> = [];
+        let mP: Array<number> = allIdx;
+        let bP: Array<number> = [];
 
         if (opacityMode === 'filter') {
             const values = this._property(this._options.opacity.filter.property.value).values;
@@ -1279,8 +1279,8 @@ export class PropertiesMap {
     // this is a *new* version of _selectTrace which not only returns the object
     // for the specific trace, but avoids unnecessary computation
     private _filter<T>(objectToFilter: T, trace?: number, selectedObjects?: T): T | T[] {
-        var mainObjects: T = objectToFilter;
-        var backgroundObjects: T = objectToFilter;
+        let mainObjects: T = objectToFilter;
+        let backgroundObjects: T = objectToFilter;
 
         if (selectedObjects === undefined) {
             if (
@@ -1304,13 +1304,11 @@ export class PropertiesMap {
                     (i) => objectToFilter[i]
                 ) as unknown) as T;
             }
-            if ((trace === undefined || trace === 2) && selectedObjects === undefined) {
-            }
         }
         if (trace === undefined) {
-            return [mainObjects, backgroundObjects, selectedObjects] as T[];
+            return [mainObjects, backgroundObjects, selectedObjects];
         } else {
-            return [mainObjects, backgroundObjects, selectedObjects][trace] as T;
+            return [mainObjects, backgroundObjects, selectedObjects][trace];
         }
     }
 }

@@ -10,8 +10,9 @@ import { optionValidator } from '../options';
 import { PositioningCallback, arrayMaxMin, getByID, makeDraggable, sendWarning } from '../utils';
 import { NumericProperties, NumericProperty } from './data';
 
-import { getColorMap, COLOR_MAPS } from './colorscales';
+import { getColorMap } from './colorscales';
 
+import {COLOR_MAPS} from './colorscales';
 import BARS_SVG from '../static/bars.svg';
 import HTML_OPTIONS from './options.html';
 
