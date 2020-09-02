@@ -661,23 +661,19 @@ export class PropertiesMap {
                 this._options.size.property.disable();
                 this._options.size.reverse.disable();
             }
-            this._restyle({ 'marker.size': this._sizes(0) } as Data, 0);
-            this._restyle({ 'marker.size': this._sizes(2) } as Data, 2);
+            this._restyle({ 'marker.size': this._sizes() } as Data, [0, 1, 2]);
         };
 
         this._options.size.factor.onchange = () => {
-            this._restyle({ 'marker.size': this._sizes(0) } as Data, 0);
-            this._restyle({ 'marker.size': this._sizes(2) } as Data, 2);
+            this._restyle({ 'marker.size': this._sizes() } as Data, [0, 1, 2]);
         };
 
         this._options.size.property.onchange = () => {
-            this._restyle({ 'marker.size': this._sizes(0) } as Data, 0);
-            this._restyle({ 'marker.size': this._sizes(2) } as Data, 2);
+          this._restyle({ 'marker.size': this._sizes() } as Data, [0, 1, 2]);
         };
 
         this._options.size.reverse.onchange = () => {
-            this._restyle({ 'marker.size': this._sizes(0) } as Data, 0);
-            this._restyle({ 'marker.size': this._sizes(2) } as Data, 2);
+            this._restyle({ 'marker.size': this._sizes() } as Data, [0, 1, 2]);
         };
     }
 
@@ -945,7 +941,7 @@ export class PropertiesMap {
      * Get the values to use as marker size with the given plotly `trace`, or
      * all of them if `trace === undefined`.
      */
-    private _sizes(trace?: number): Array<number | number[]> {
+    private _sizes(trace?: number): Array<number> | Array<number[]>{
         const sizes = this._property(this._options.size.property.value).values;
         const values = this._options.calculateSizes(sizes);
         const selected = [];
@@ -958,7 +954,7 @@ export class PropertiesMap {
                 }
             }
         }
-        return this._selectTrace<number | number[]>(values, selected, trace);
+        return this._filter<number[]>(values, trace, selected)
     }
 
     /**
