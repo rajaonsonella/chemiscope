@@ -891,26 +891,17 @@ export class PropertiesMap {
      * @param  trace  plotly trace for which we require coordinate
      * @return        data usable with Plotly.restyle
      */
-    private _coordinates(axis: AxisOptions, trace?: number): Array<undefined | number[]> {
+    private _coordinates(axis: AxisOptions, trace?: number): Array<number[]> | Array<number>{
         // this happen for the z axis in 2D mode
         if (axis.property.value === '') {
-            return this._selectTrace(undefined, undefined, trace, undefined);
+          return this._filter<Array<number>>([NaN], trace);
+        } else {
+          if(this._is3D()){
+            return this._filter<Array<number>>(this._property(axis.property.value).values, trace);
+          } else {
+            return this._filter<Array<number>>(this._property(axis.property.value).values, trace, [NaN]);
+          }
         }
-
-        const values = this._property(axis.property.value).values;
-        // in 2d mode, set all selected markers coordinates to NaN since we are
-        // using HTML markers instead.
-        const selected = [];
-        for (const marker of this._selected.values()) {
-            if (this._is3D()) {
-                selected.push(values[marker.current]);
-            } else {
-                selected.push(NaN);
-            }
-        }
-
-
-        return this._selectTrace<number[]>(values, selected, trace);
     }
 
     /**
@@ -1165,13 +1156,13 @@ export class PropertiesMap {
                 2
             );
         } else {
-            const allX = this._coordinates(this._options.x, 0) as number[][];
-            const allY = this._coordinates(this._options.y, 0) as number[][];
+            const allX = this._coordinates(this._options.x, 0) as number[];
+            const allY = this._coordinates(this._options.y, 0) as number[];
             const plotWidth = this._plot.getBoundingClientRect().width;
 
             for (const datum of data) {
-                const rawX = allX[0][datum.current];
-                const rawY = allY[0][datum.current];
+                const rawX = allX[datum.current];
+                const rawY = allY[datum.current];
                 if (this._insidePlot(rawX, rawY)) {
                     const x = plotWidth - this._computeRSCoord(rawX, 'x');
                     const y = this._computeRSCoord(rawY, 'y');
