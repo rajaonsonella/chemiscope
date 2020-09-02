@@ -349,9 +349,7 @@ export class PropertiesMap {
     private _connectSettings() {
         // ======= x axis settings
         this._options.x.property.onchange = () => {
-            const values = this._filter<Array<number>>(
-                this._coordinates(this._options.x)
-            ) as number[][];
+            const values = this._filter<number>(this._coordinates(this._options.x)) as number[][];
             this._restyle({ x: values }, [0, 1, 2]);
             this._relayout(({
                 'scene.xaxis.title': this._options.x.property.value,
@@ -395,9 +393,7 @@ export class PropertiesMap {
 
         // ======= y axis settings
         this._options.y.property.onchange = () => {
-            const values = this._filter<Array<number>>(
-                this._coordinates(this._options.y)
-            ) as number[][];
+            const values = this._filter<number>(this._coordinates(this._options.y)) as number[][];
             this._restyle({ y: values }, [0, 1, 2]);
             this._relayout(({
                 'scene.yaxis.title': this._options.y.property.value,
@@ -432,7 +428,7 @@ export class PropertiesMap {
                 }
             }
 
-            const values = this._filter<Array<number>>(this._coordinates(this._options.z));
+            const values = this._filter<number>(this._coordinates(this._options.z));
             this._restyle({ z: values } as Data, [0, 1, 2]);
             this._relayout(({
                 'scene.zaxis.title': this._options.z.property.value,
@@ -575,9 +571,9 @@ export class PropertiesMap {
                     'marker.color': this._colors(),
                     'marker.size': this._sizes(),
                     'marker.symbol': this._symbols(),
-                    x: this._filter<Array<number>>(this._coordinates(this._options.x)),
-                    y: this._filter<Array<number>>(this._coordinates(this._options.y)),
-                    z: this._filter<Array<number>>(this._coordinates(this._options.z)),
+                    x: this._filter<number>(this._coordinates(this._options.x)),
+                    y: this._filter<number>(this._coordinates(this._options.y)),
+                    z: this._filter<number>(this._coordinates(this._options.z)),
                 } as Data,
                 [0, 1, 2]
             );
@@ -593,9 +589,9 @@ export class PropertiesMap {
                     'marker.color': this._colors(),
                     'marker.size': this._sizes(),
                     'marker.symbol': this._symbols(),
-                    x: this._filter<Array<number>>(this._coordinates(this._options.x)),
-                    y: this._filter<Array<number>>(this._coordinates(this._options.y)),
-                    z: this._filter<Array<number>>(this._coordinates(this._options.z)),
+                    x: this._filter<number>(this._coordinates(this._options.x)),
+                    y: this._filter<number>(this._coordinates(this._options.y)),
+                    z: this._filter<number>(this._coordinates(this._options.z)),
                 } as Data,
                 [0, 1, 2]
             );
@@ -608,9 +604,9 @@ export class PropertiesMap {
                     'marker.color': this._colors(),
                     'marker.size': this._sizes(),
                     'marker.symbol': this._symbols(),
-                    x: this._filter<Array<number>>(this._coordinates(this._options.x)),
-                    y: this._filter<Array<number>>(this._coordinates(this._options.y)),
-                    z: this._filter<Array<number>>(this._coordinates(this._options.z)),
+                    x: this._filter<number>(this._coordinates(this._options.x)),
+                    y: this._filter<number>(this._coordinates(this._options.y)),
+                    z: this._filter<number>(this._coordinates(this._options.z)),
                 } as Data,
                 [0, 1, 2]
             );
@@ -623,9 +619,9 @@ export class PropertiesMap {
                     'marker.color': this._colors(),
                     'marker.size': this._sizes(),
                     'marker.symbol': this._symbols(),
-                    x: this._filter<Array<number>>(this._coordinates(this._options.x)),
-                    y: this._filter<Array<number>>(this._coordinates(this._options.y)),
-                    z: this._filter<Array<number>>(this._coordinates(this._options.z)),
+                    x: this._filter<number>(this._coordinates(this._options.x)),
+                    y: this._filter<number>(this._coordinates(this._options.y)),
+                    z: this._filter<number>(this._coordinates(this._options.z)),
                 } as Data,
                 [0, 1, 2]
             );
@@ -697,9 +693,9 @@ export class PropertiesMap {
         const sizes = this._sizes();
         const symbols = this._symbols();
 
-        const x = this._filter<Array<number>>(this._coordinates(this._options.x));
-        const y = this._filter<Array<number>>(this._coordinates(this._options.y));
-        const z = this._filter<Array<number>>(this._coordinates(this._options.z));
+        const x = this._filter<number>(this._coordinates(this._options.x));
+        const y = this._filter<number>(this._coordinates(this._options.y));
+        const z = this._filter<number>(this._coordinates(this._options.z));
 
         const type = this._is3D() ? 'scatter3d' : 'scattergl';
 
@@ -921,12 +917,12 @@ export class PropertiesMap {
      */
     private _colors(trace?: number): Array<number[]> | Array<number> {
         if (this._options.hasColors()) {
-            return this._filter<Array<number>>(
+            return this._filter<number>(
                 this._property(this._options.color.property.value).values,
                 trace
             );
         } else {
-            return this._filter<Array<number>>([0.5], trace);
+            return this._filter<number>([0.5], trace);
         }
     }
 
@@ -934,11 +930,11 @@ export class PropertiesMap {
      * Get the **line** color values to use with the given plotly `trace`, or
      * all of them if `trace === undefined`
      */
-    private _lineColors(trace?: number): string | Array<string> {
+    private _lineColors(trace?: number): Array<string> | Array<string[]> {
         if (this._is3D()) {
-            return 'black';
+            return ['black'];
         } else {
-            return this._filter<string>('rgba(1, 1, 1, 0.3)', trace, 'black');
+            return this._filter<string>(['rgba(1, 1, 1, 0.3)'], trace, ['black']);
         }
     }
 
@@ -959,7 +955,7 @@ export class PropertiesMap {
                 }
             }
         }
-        return this._filter<Array<number>>(values, trace, selected);
+        return this._filter<number>(values, trace, selected);
     }
 
     /**
@@ -970,12 +966,12 @@ export class PropertiesMap {
     private _symbols(trace?: number): Array<string | string[] | number[]> {
         if (this._options.symbol.value === '') {
             // default to 0 (i.e. circles)
-            return this._filter<string>('circle', trace) as string[];
+            return this._filter<string>(['circle'], trace);
         }
 
         const property = this._property(this._options.symbol.value);
         const symbols = this._options.getSymbols(property);
-        return this._filter<typeof symbols>(symbols, trace) as Array<typeof symbols>;
+        return this._filter<typeof symbols[0]>(symbols, trace) as Array<typeof symbols>;
     }
 
     /** Should we show the legend for the various symbols used? */
@@ -1163,15 +1159,15 @@ export class PropertiesMap {
                     'marker.color': this._colors(),
                     'marker.size': this._sizes(),
                     'marker.symbol': this._symbols(),
-                    x: this._filter<Array<number>>(this._coordinates(this._options.x)),
-                    y: this._filter<Array<number>>(this._coordinates(this._options.y)),
-                    z: this._filter<Array<number>>(this._coordinates(this._options.z)),
+                    x: this._filter<number>(this._coordinates(this._options.x)),
+                    y: this._filter<number>(this._coordinates(this._options.y)),
+                    z: this._filter<number>(this._coordinates(this._options.z)),
                 } as Data,
                 [0, 1, 2]
             );
         } else {
-            const allX = this._coordinates(this._options.x) as Array<number>;
-            const allY = this._coordinates(this._options.y) as Array<number>;
+            const allX = this._coordinates(this._options.x);
+            const allY = this._coordinates(this._options.y);
             const plotWidth = this._plot.getBoundingClientRect().width;
 
             for (const datum of data) {
@@ -1276,35 +1272,28 @@ export class PropertiesMap {
         this._backgroundPoints = bP;
     }
 
-    // this is a *new* version of _selectTrace which not only returns the object
+    // this is a *new* version of _selectTrace which not only returns the objects
     // for the specific trace, but avoids unnecessary computation
-    private _filter<T>(objectToFilter: T, trace?: number, selectedObjects?: T): T | T[] {
-        let mainObjects: T = objectToFilter;
-        let backgroundObjects: T = objectToFilter;
+    private _filter<T>(objectsToFilter: T[], trace?: number, selectedObjects?: T[]): T[] | T[][] {
+        let mainObjects: T[] = objectsToFilter;
+        let backgroundObjects: T[] = objectsToFilter;
 
-        if (selectedObjects === undefined) {
-            if (
-                (trace === undefined || trace === 2) &&
-                Array.isArray(objectToFilter) &&
-                objectToFilter.length !== 1
-            ) {
-                selectedObjects = (Array.from(this._selected.values()).map(
-                    (data) => objectToFilter[data.current]
-                ) as unknown) as T;
-            } else {
-                selectedObjects = objectToFilter;
+        if (objectsToFilter.length === this._coordinates(this._options.x).length) {
+            if (selectedObjects === undefined) {
+                selectedObjects = Array.from(this._selected.values()).map(
+                    (data) => objectsToFilter[data.current]
+                );
             }
-        }
-        if (Array.isArray(objectToFilter) && objectToFilter.length !== 1) {
             if (trace === undefined || trace === 0) {
-                mainObjects = (this._mainPoints.map((i) => objectToFilter[i]) as unknown) as T;
+                mainObjects = this._mainPoints.map((i) => objectsToFilter[i]);
             }
             if (trace === undefined || trace === 1) {
-                backgroundObjects = (this._backgroundPoints.map(
-                    (i) => objectToFilter[i]
-                ) as unknown) as T;
+                backgroundObjects = this._backgroundPoints.map((i) => objectsToFilter[i]);
             }
+        } else if (selectedObjects === undefined) {
+            selectedObjects = objectsToFilter;
         }
+
         if (trace === undefined) {
             return [mainObjects, backgroundObjects, selectedObjects];
         } else {
