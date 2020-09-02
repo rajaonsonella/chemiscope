@@ -452,7 +452,7 @@ export class PropertiesMap {
             this._options.color.enable();
             this._colorReset.disabled = false;
 
-            // todo might set wrong range
+            // assumes range should only be set by ''main'' points
             const values = this._colors()[0] as Array<number>;
             const { min, max } = arrayMaxMin(values);
 
@@ -471,8 +471,7 @@ export class PropertiesMap {
                 this._options.color.enable();
                 this._colorReset.disabled = false;
 
-                // todo
-                const values = this._colors(0)[0] as Array<number>;
+                const values = this._colors()[0] as Array<number>;
                 const { min, max } = arrayMaxMin(values);
 
                 this._options.color.min.value = min;
@@ -885,8 +884,7 @@ export class PropertiesMap {
     }
 
     /**
-     * Get the values associated with the given `axis`, to use with the given
-     * plotly `trace`, or all of them if `trace === undefined`
+     * Get the values associated with the given `axis`, unfiltered by trace
      *
      * @param  axis   Options of the axis we need coordinates for
      * @param  trace  plotly trace for which we require coordinate
@@ -1221,6 +1219,9 @@ export class PropertiesMap {
         return check;
     }
 
+    // this applies the opacity filter to the points, saving the points
+    // in the "main" trace (i.e. those meeting the filter criterion) in
+    // this._mainPoints, and putting all other points in this._backgroundPoints
     private _updateFilter() {
       const opacityMode = this._options.opacity.mode.value;
 
