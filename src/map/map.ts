@@ -1144,14 +1144,14 @@ export class PropertiesMap {
             data.forEach((d) => d.toggleVisible(false));
             this._restyle(
                 {
-                    'marker.color': this._colors()[2],
-                    'marker.size': this._sizes()[2],
-                    'marker.symbol': this._symbols()[2],
-                    x: this._filter<number[]>(this._coordinates(this._options.x), 2),
-                    y: this._filter<number[]>(this._coordinates(this._options.y), 2),
-                    z: this._filter<number[]>(this._coordinates(this._options.z), 2),
+                    'marker.color': this._colors(),
+                    'marker.size': this._sizes(),
+                    'marker.symbol': this._symbols(),
+                    x: this._filter<number[]>(this._coordinates(this._options.x)),
+                    y: this._filter<number[]>(this._coordinates(this._options.y)),
+                    z: this._filter<number[]>(this._coordinates(this._options.z)),
                 } as Data,
-                2
+                [0, 1, 2]
             );
         } else {
             const allX = this._coordinates(this._options.x) as number[];
