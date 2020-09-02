@@ -929,11 +929,11 @@ export class PropertiesMap {
      * Get the **line** color values to use with the given plotly `trace`, or
      * all of them if `trace === undefined`
      */
-    private _lineColors(trace?: number): string[] {
+    private _lineColors(trace?: number): string | Array<string> {
         if (this._is3D()) {
-            return this._selectTrace<string>('black', 'black', trace);
+            return 'black'
         } else {
-            return this._selectTrace<string>('rgba(1, 1, 1, 0.3)', 'black', trace);
+            return this._filter<string>('rgba(1, 1, 1, 0.3)', trace, 'black');
         }
     }
 
