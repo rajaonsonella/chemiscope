@@ -209,34 +209,33 @@
                     </button>
 
                     <div class="collapse chsp-map-extra-options" id="chsp-extra-opacity" style="grid-template-columns: 1fr 1fr;">
+                        <div class="input-group input-group-sm">
+                            <div class="input-group-prepend">
+                                <label class="input-group-text" for="chsp-opacity-minimum">minimum:</label>
+                            </div>
+                            <input type="range" min="0" max="1" step="0.05" class="form-control custom-range" id="chsp-opacity-minimum" />
+                        </div>
+                        <div class="input-group input-group-sm">
+                            <div class="input-group-prepend">
+                                <label class="input-group-text" for="chsp-opacity-maximum">maximum:</label>
+                            </div>
+                            <input type="range" min="0" max="1" step="0.05" class="form-control custom-range" id="chsp-opacity-maximum" />
+                        </div>
 
-                      <div class="input-group input-group-sm">
-                          <div class="input-group-prepend">
-                              <label class="input-group-text" for="chsp-opacity-minimum">minimum:</label>
-                          </div>
-                          <input type="range" min="0" max="1" step="0.05" class="form-control custom-range" id="chsp-opacity-minimum" />
-                      </div>
-                      <div class="input-group input-group-sm">
-                          <div class="input-group-prepend">
-                              <label class="input-group-text" for="chsp-opacity-maximum">maximum:</label>
-                          </div>
-                          <input type="range" min="0" max="1" step="0.05" class="form-control custom-range" id="chsp-opacity-maximum" />
-                      </div>
-
-                      <div class="input-group input-group-sm">
-                          <div class="input-group-prepend">
-                              <label class="input-group-text" for="chsp-opacity-property">property:</label>
-                          </div>
-                          <select id="chsp-opacity-property" class="custom-select" disabled> </select>
-                      </div>
-                      <div class="input-group input-group-sm">
-                          <select id="chsp-opacity-operator" class="custom-select" disabled>
-                              <option value="<">&lt</option>
-                              <option value=">">&gt</option>
-                              <option value="=">=</option>
-                          </select>
-                        <input id="chsp-opacity-cutoff" class="form-control" type="number" step="any" />
-                      </div>
+                        <div class="input-group input-group-sm">
+                            <div class="input-group-prepend">
+                                <label class="input-group-text" for="chsp-opacity-property">property:</label>
+                            </div>
+                            <select id="chsp-opacity-property" class="custom-select" disabled> </select>
+                        </div>
+                        <div class="input-group input-group-sm">
+                            <select id="chsp-opacity-operator" class="custom-select" disabled>
+                                <option value="<">&lt</option>
+                                <option value=">">&gt</option>
+                                <option value="=">=</option>
+                            </select>
+                            <input id="chsp-opacity-cutoff" class="form-control" type="number" step="any" />
+                        </div>
                     </div>
 
                     <div class="input-group input-group-sm">

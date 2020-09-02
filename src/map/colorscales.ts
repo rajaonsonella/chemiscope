@@ -704,10 +704,9 @@ export const COLOR_MAPS: ColorMaps = {
     'hsv (periodic)': HSV,
 };
 
-
 export function getColorMap(colormap: string): ColorScale {
-  const cmap = COLOR_MAPS[colormap];
-  assert(cmap !== undefined);
+    const cmap = COLOR_MAPS[colormap];
+    assert(cmap !== undefined);
 
-  return rgb_to_plotly(cmap);
+    return rgb_to_plotly(cmap);
 }

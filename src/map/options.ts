@@ -66,9 +66,9 @@ export class MapOptions extends OptionsGroup {
     public palette: HTMLOption<'string'>;
     public opacity: {
         filter: {
-          property: HTMLOption<'string'>;
-          operator: HTMLOption<'string'>;
-          cutoff: HTMLOption<'number'>;
+            property: HTMLOption<'string'>;
+            operator: HTMLOption<'string'>;
+            cutoff: HTMLOption<'number'>;
         };
         mode: HTMLOption<'string'>;
         maximum: HTMLOption<'number'>;
@@ -119,24 +119,31 @@ export class MapOptions extends OptionsGroup {
 
         this.opacity = {
             filter: {
-              property: new HTMLOption('string', propertiesName[0]),
-              operator: new HTMLOption('string', '>'),
-              cutoff: new HTMLOption('number', 0.0)
+                property: new HTMLOption('string', propertiesName[0]),
+                operator: new HTMLOption('string', '>'),
+                cutoff: new HTMLOption('number', 0.0),
             },
             mode: new HTMLOption('string', 'constant'),
             maximum: new HTMLOption('number', 1.0),
             minimum: new HTMLOption('number', 1.0),
         };
 
-        this.opacity.mode.validate = optionValidator(['constant', 'filter', 'structure'], 'opacity')
+        this.opacity.mode.validate = optionValidator(
+            ['constant', 'filter', 'structure'],
+            'opacity'
+        );
         this.opacity.minimum.validate = (value) => {
             if (value < 0 || value > this.opacity.maximum.value) {
-                throw Error(`opacity must be between 0 and ${this.opacity.maximum.value}, got ${value}`);
+                throw Error(
+                    `opacity must be between 0 and ${this.opacity.maximum.value}, got ${value}`
+                );
             }
         };
         this.opacity.maximum.validate = (value) => {
             if (value > 1 || value < this.opacity.minimum.value) {
-                throw Error(`opacity must be between ${this.opacity.minimum.value} and 1, got ${value}`);
+                throw Error(
+                    `opacity must be between ${this.opacity.minimum.value} and 1, got ${value}`
+                );
             }
         };
         this.opacity.filter.property.validate = optionValidator(propertiesName, 'size');

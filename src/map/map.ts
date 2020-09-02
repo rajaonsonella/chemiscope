@@ -349,7 +349,9 @@ export class PropertiesMap {
     private _connectSettings() {
         // ======= x axis settings
         this._options.x.property.onchange = () => {
-            const values = this._filter<Array<number>>(this._coordinates(this._options.x)) as number[][];
+            const values = this._filter<Array<number>>(
+                this._coordinates(this._options.x)
+            ) as number[][];
             this._restyle({ x: values }, [0, 1, 2]);
             this._relayout(({
                 'scene.xaxis.title': this._options.x.property.value,
@@ -393,7 +395,9 @@ export class PropertiesMap {
 
         // ======= y axis settings
         this._options.y.property.onchange = () => {
-            const values = this._filter<Array<number>>(this._coordinates(this._options.y)) as number[][];
+            const values = this._filter<Array<number>>(
+                this._coordinates(this._options.y)
+            ) as number[][];
             this._restyle({ y: values }, [0, 1, 2]);
             this._relayout(({
                 'scene.yaxis.title': this._options.y.property.value,
@@ -545,19 +549,25 @@ export class PropertiesMap {
         // ======= opacity
         this._options.opacity.mode.onchange = () => {
             if (this._options.opacity.mode.value === 'filter') {
-              this._options.opacity.filter.property.enable()
-              this._options.opacity.filter.cutoff.enable()
-              this._options.opacity.filter.operator.enable()
+                this._options.opacity.filter.property.enable();
+                this._options.opacity.filter.cutoff.enable();
+                this._options.opacity.filter.operator.enable();
             } else {
-              this._options.opacity.filter.property.disable()
-              this._options.opacity.filter.cutoff.disable()
-              this._options.opacity.filter.operator.disable()
+                this._options.opacity.filter.property.disable();
+                this._options.opacity.filter.cutoff.disable();
+                this._options.opacity.filter.operator.disable();
             }
             if (this._options.opacity.mode.value === 'constant') {
-                this._options.opacity.minimum.disable()
+                this._options.opacity.minimum.disable();
             } else {
-                this._options.opacity.minimum.enable()
-                this._options.opacity.minimum.value = Math.max(0.0, Math.min(this._options.opacity.minimum.value, this._options.opacity.maximum.value - 0.2))
+                this._options.opacity.minimum.enable();
+                this._options.opacity.minimum.value = Math.max(
+                    0.0,
+                    Math.min(
+                        this._options.opacity.minimum.value,
+                        this._options.opacity.maximum.value - 0.2
+                    )
+                );
             }
             this._updateFilter();
             this._restyle(
@@ -574,63 +584,69 @@ export class PropertiesMap {
         };
 
         this._options.opacity.filter.property.onchange = () => {
-          const filterVals = this._property(this._options.opacity.filter.property.value).values
-          const average = filterVals.reduce((a, b) => a + b) / filterVals.length;
-          this._options.opacity.filter.cutoff.value = average;
-          this._updateFilter();
-          this._restyle(
-              {
-                  'marker.color': this._colors(),
-                  'marker.size': this._sizes(),
-                  'marker.symbol': this._symbols(),
-                  x: this._filter<Array<number>>(this._coordinates(this._options.x)),
-                  y: this._filter<Array<number>>(this._coordinates(this._options.y)),
-                  z: this._filter<Array<number>>(this._coordinates(this._options.z)),
-              } as Data,
-              [0, 1, 2]
-          );
+            const filterVals = this._property(this._options.opacity.filter.property.value).values;
+            const average = filterVals.reduce((a, b) => a + b) / filterVals.length;
+            this._options.opacity.filter.cutoff.value = average;
+            this._updateFilter();
+            this._restyle(
+                {
+                    'marker.color': this._colors(),
+                    'marker.size': this._sizes(),
+                    'marker.symbol': this._symbols(),
+                    x: this._filter<Array<number>>(this._coordinates(this._options.x)),
+                    y: this._filter<Array<number>>(this._coordinates(this._options.y)),
+                    z: this._filter<Array<number>>(this._coordinates(this._options.z)),
+                } as Data,
+                [0, 1, 2]
+            );
         };
 
         this._options.opacity.filter.operator.onchange = () => {
-          this._updateFilter();
-          this._restyle(
-              {
-                  'marker.color': this._colors(),
-                  'marker.size': this._sizes(),
-                  'marker.symbol': this._symbols(),
-                  x: this._filter<Array<number>>(this._coordinates(this._options.x)),
-                  y: this._filter<Array<number>>(this._coordinates(this._options.y)),
-                  z: this._filter<Array<number>>(this._coordinates(this._options.z)),
-              } as Data,
-              [0, 1, 2]
-          );
+            this._updateFilter();
+            this._restyle(
+                {
+                    'marker.color': this._colors(),
+                    'marker.size': this._sizes(),
+                    'marker.symbol': this._symbols(),
+                    x: this._filter<Array<number>>(this._coordinates(this._options.x)),
+                    y: this._filter<Array<number>>(this._coordinates(this._options.y)),
+                    z: this._filter<Array<number>>(this._coordinates(this._options.z)),
+                } as Data,
+                [0, 1, 2]
+            );
         };
 
         this._options.opacity.filter.cutoff.onchange = () => {
-          this._updateFilter();
-          this._restyle(
-              {
-                  'marker.color': this._colors(),
-                  'marker.size': this._sizes(),
-                  'marker.symbol': this._symbols(),
-                  x: this._filter<Array<number>>(this._coordinates(this._options.x)),
-                  y: this._filter<Array<number>>(this._coordinates(this._options.y)),
-                  z: this._filter<Array<number>>(this._coordinates(this._options.z)),
-              } as Data,
-              [0, 1, 2]
-          );
+            this._updateFilter();
+            this._restyle(
+                {
+                    'marker.color': this._colors(),
+                    'marker.size': this._sizes(),
+                    'marker.symbol': this._symbols(),
+                    x: this._filter<Array<number>>(this._coordinates(this._options.x)),
+                    y: this._filter<Array<number>>(this._coordinates(this._options.y)),
+                    z: this._filter<Array<number>>(this._coordinates(this._options.z)),
+                } as Data,
+                [0, 1, 2]
+            );
         };
 
         this._options.opacity.minimum.onchange = () => {
-          this._restyle({
-                          opacity: this._options.opacity.minimum.value,
-                        } as Data, 1);
+            this._restyle(
+                {
+                    opacity: this._options.opacity.minimum.value,
+                } as Data,
+                1
+            );
         };
 
         this._options.opacity.maximum.onchange = () => {
-          this._restyle({
-                          opacity: this._options.opacity.maximum.value,
-                        } as Data, [0,2]);
+            this._restyle(
+                {
+                    opacity: this._options.opacity.maximum.value,
+                } as Data,
+                [0, 2]
+            );
         };
 
         // ======= markers symbols
@@ -664,7 +680,7 @@ export class PropertiesMap {
         };
 
         this._options.size.property.onchange = () => {
-          this._restyle({ 'marker.size': this._sizes() } as Data, [0, 1, 2]);
+            this._restyle({ 'marker.size': this._sizes() } as Data, [0, 1, 2]);
         };
 
         this._options.size.reverse.onchange = () => {
@@ -842,10 +858,10 @@ export class PropertiesMap {
             }
             let environment;
             const trace = event.points[0].data.name;
-            if(trace === 'background'){
-              environment = this._backgroundPoints[event.points[0].pointNumber];
+            if (trace === 'background') {
+                environment = this._backgroundPoints[event.points[0].pointNumber];
             } else if (trace === 'main') {
-              environment = this._mainPoints[event.points[0].pointNumber];
+                environment = this._mainPoints[event.points[0].pointNumber];
             } else if (trace === 'selected' && this._is3D()) {
                 // if someone has clicked on a selection marker, set to active
                 // this is only used in 3D mode, since in 2D the HTML marker
@@ -862,11 +878,11 @@ export class PropertiesMap {
                 }
             }
 
-            if (environment !== undefined ) {
-              const indexes = this._indexer.from_environment(environment);
+            if (environment !== undefined) {
+                const indexes = this._indexer.from_environment(environment);
 
-              this.select(indexes);
-              this.onselect(indexes);
+                this.select(indexes);
+                this.onselect(indexes);
             }
         });
 
@@ -890,23 +906,25 @@ export class PropertiesMap {
      * @param  trace  plotly trace for which we require coordinate
      * @return        data usable with Plotly.restyle
      */
-    private _coordinates(axis: AxisOptions): Array<number>{
+    private _coordinates(axis: AxisOptions): Array<number> {
         // this happen for the z axis in 2D mode
         if (axis.property.value === '') {
-          return [NaN]
+            return [NaN];
         } else {
-          return this._property(axis.property.value).values;
+            return this._property(axis.property.value).values;
         }
     }
-
 
     /**
      * Get the color values to use with the given plotly `trace`, or all of
      * them if `trace === undefined`
      */
-    private _colors(trace?: number): Array<number[]> | Array<number>{
+    private _colors(trace?: number): Array<number[]> | Array<number> {
         if (this._options.hasColors()) {
-            return this._filter<Array<number>>(this._property(this._options.color.property.value).values, trace);
+            return this._filter<Array<number>>(
+                this._property(this._options.color.property.value).values,
+                trace
+            );
         } else {
             return this._filter<Array<number>>([0.5], trace);
         }
@@ -918,7 +936,7 @@ export class PropertiesMap {
      */
     private _lineColors(trace?: number): string | Array<string> {
         if (this._is3D()) {
-            return 'black'
+            return 'black';
         } else {
             return this._filter<string>('rgba(1, 1, 1, 0.3)', trace, 'black');
         }
@@ -928,7 +946,7 @@ export class PropertiesMap {
      * Get the values to use as marker size with the given plotly `trace`, or
      * all of them if `trace === undefined`.
      */
-    private _sizes(trace?: number): Array<number> | Array<number[]>{
+    private _sizes(trace?: number): Array<number> | Array<number[]> {
         const sizes = this._property(this._options.size.property.value).values;
         const values = this._options.calculateSizes(sizes);
         const selected = [];
@@ -941,7 +959,7 @@ export class PropertiesMap {
                 }
             }
         }
-        return this._filter<Array<number>>(values, trace, selected)
+        return this._filter<Array<number>>(values, trace, selected);
     }
 
     /**
@@ -949,10 +967,10 @@ export class PropertiesMap {
      * all of them if `trace === undefined`.
      */
 
-     private _symbols(trace?: number): Array<string | string[] | number[]> {
+    private _symbols(trace?: number): Array<string | string[] | number[]> {
         if (this._options.symbol.value === '') {
             // default to 0 (i.e. circles)
-             return this._filter<string>('circle', trace) as string[];
+            return this._filter<string>('circle', trace) as string[];
         }
 
         const property = this._property(this._options.symbol.value);
@@ -1223,67 +1241,76 @@ export class PropertiesMap {
     // in the "main" trace (i.e. those meeting the filter criterion) in
     // this._mainPoints, and putting all other points in this._backgroundPoints
     private _updateFilter() {
-      const opacityMode = this._options.opacity.mode.value;
+        const opacityMode = this._options.opacity.mode.value;
 
-      // don't know if there's a better way to do this
-      const nIdx = this._property(this._options.opacity.filter.property.value).values.length;
-      const allIdx = [];
-      for (var i = 0; i<nIdx; i++){
-        allIdx.push(i);
-      }
-
-      var mP: Array<number> = allIdx;
-      var bP: Array<number> = [];
-
-      if(opacityMode === 'filter') {
-        const values = this._property(this._options.opacity.filter.property.value).values;
-        const operator = this._options.opacity.filter.operator.value;
-        const cutoff = this._options.opacity.filter.cutoff.value;
-
-        if(operator === '>') {
-          mP = allIdx.filter(i => (values[i] > cutoff));
-          bP = allIdx.filter(i => (values[i] <= cutoff));
-        } else if (operator === "<") {
-          mP = allIdx.filter(i => (values[i] < cutoff));
-          bP = allIdx.filter(i => (values[i] >= cutoff));
-        } else if (operator === "=") {
-          mP = allIdx.filter(i => (values[i] === cutoff));
-          bP = allIdx.filter(i => (values[i] !== cutoff));
-        } else {
-          throw Error('No other filters are supported');
+        // don't know if there's a better way to do this
+        const nIdx = this._property(this._options.opacity.filter.property.value).values.length;
+        const allIdx = [];
+        for (var i = 0; i < nIdx; i++) {
+            allIdx.push(i);
         }
-      }
 
-      this._mainPoints = mP;
-      this._backgroundPoints = bP;
+        var mP: Array<number> = allIdx;
+        var bP: Array<number> = [];
+
+        if (opacityMode === 'filter') {
+            const values = this._property(this._options.opacity.filter.property.value).values;
+            const operator = this._options.opacity.filter.operator.value;
+            const cutoff = this._options.opacity.filter.cutoff.value;
+
+            if (operator === '>') {
+                mP = allIdx.filter((i) => values[i] > cutoff);
+                bP = allIdx.filter((i) => values[i] <= cutoff);
+            } else if (operator === '<') {
+                mP = allIdx.filter((i) => values[i] < cutoff);
+                bP = allIdx.filter((i) => values[i] >= cutoff);
+            } else if (operator === '=') {
+                mP = allIdx.filter((i) => values[i] === cutoff);
+                bP = allIdx.filter((i) => values[i] !== cutoff);
+            } else {
+                throw Error('No other filters are supported');
+            }
+        }
+
+        this._mainPoints = mP;
+        this._backgroundPoints = bP;
     }
 
     // this is a *new* version of _selectTrace which not only returns the object
     // for the specific trace, but avoids unnecessary computation
     private _filter<T>(objectToFilter: T, trace?: number, selectedObjects?: T): T | T[] {
-      var mainObjects: T = objectToFilter;
-      var backgroundObjects: T = objectToFilter;
+        var mainObjects: T = objectToFilter;
+        var backgroundObjects: T = objectToFilter;
 
-      if(selectedObjects === undefined) {
-        if((trace === undefined || trace === 2) && Array.isArray(objectToFilter) && objectToFilter.length !== 1) {
-          selectedObjects = Array.from(this._selected.values()).map((data) => objectToFilter[data.current]) as unknown as T;
-        } else {selectedObjects = objectToFilter;}
-      }
-      if(Array.isArray(objectToFilter) && objectToFilter.length !== 1) {
-        if(trace === undefined || trace === 0){
-          mainObjects = this._mainPoints.map((i) => objectToFilter[i]) as unknown as T;
+        if (selectedObjects === undefined) {
+            if (
+                (trace === undefined || trace === 2) &&
+                Array.isArray(objectToFilter) &&
+                objectToFilter.length !== 1
+            ) {
+                selectedObjects = (Array.from(this._selected.values()).map(
+                    (data) => objectToFilter[data.current]
+                ) as unknown) as T;
+            } else {
+                selectedObjects = objectToFilter;
+            }
         }
-        if (trace === undefined || trace === 1) {
-          backgroundObjects = this._backgroundPoints.map((i) => objectToFilter[i]) as unknown as T;
+        if (Array.isArray(objectToFilter) && objectToFilter.length !== 1) {
+            if (trace === undefined || trace === 0) {
+                mainObjects = (this._mainPoints.map((i) => objectToFilter[i]) as unknown) as T;
+            }
+            if (trace === undefined || trace === 1) {
+                backgroundObjects = (this._backgroundPoints.map(
+                    (i) => objectToFilter[i]
+                ) as unknown) as T;
+            }
+            if ((trace === undefined || trace === 2) && selectedObjects === undefined) {
+            }
         }
-        if ((trace === undefined || trace === 2)  && selectedObjects === undefined) {
-
+        if (trace === undefined) {
+            return [mainObjects, backgroundObjects, selectedObjects] as T[];
+        } else {
+            return [mainObjects, backgroundObjects, selectedObjects][trace] as T;
         }
-      }
-      if (trace === undefined) {
-        return [mainObjects, backgroundObjects, selectedObjects] as T[];
-      } else {
-        return [mainObjects, backgroundObjects, selectedObjects][trace] as T;
-      }
     }
 }
