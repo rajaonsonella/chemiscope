@@ -10,7 +10,7 @@ import { optionValidator } from '../options';
 import { PositioningCallback, arrayMaxMin, getByID, makeDraggable, sendWarning } from '../utils';
 import { NumericProperties, NumericProperty } from './data';
 
-import { COLOR_MAPS } from './colorscales';
+import { getColorMap, COLOR_MAPS } from './colorscales';
 
 import BARS_SVG from '../static/bars.svg';
 import HTML_OPTIONS from './options.html';
@@ -413,6 +413,6 @@ export class MapOptions extends OptionsGroup {
 
     /** Get the colorscale to use for markers in the main plotly trace */
     public colorScale(): Plotly.ColorScale {
-        return COLOR_MAPS[this.palette.value];
+        return getColorMap(this.palette.value);
     }
 }
