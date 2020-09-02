@@ -498,9 +498,13 @@ export class PropertiesMap {
             this._restyle(
                 {
                     hovertemplate: this._options.hovertemplate(),
+<<<<<<< HEAD
                     'marker.color': this._colors(0),
+=======
+                    'marker.color': this._colors(),
+>>>>>>> 3aae5e4... Updates to call of '_colors'
                 } as Data,
-                0
+                [0, 1, 2]
             );
         };
 
@@ -522,8 +526,9 @@ export class PropertiesMap {
         this._options.color.max.onchange = colorRangeChange;
 
         this._colorReset.onclick = () => {
-            // todo
-            const values = this._colors(0)[0] as number[];
+            // leaving as is will make the colorbar only scale
+            // with the "main" points which we should discuss
+            const values = this._colors()[0] as number[];
             const { min, max } = arrayMaxMin(values);
             this._options.color.min.value = min;
             this._options.color.max.value = max;
@@ -916,20 +921,12 @@ export class PropertiesMap {
      * Get the color values to use with the given plotly `trace`, or all of
      * them if `trace === undefined`
      */
-    private _colors(trace?: number): Array<string | string[] | number | number[]> {
-        let values;
+    private _colors(trace?: number): Array<number[]> | Array<number>{
         if (this._options.hasColors()) {
-            values = this._property(this._options.color.property.value).values;
+            return this._filter<Array<number>>(this._property(this._options.color.property.value).values, trace);
         } else {
-            values = 0.5;
+            return this._filter<Array<number>>([0.5], trace);
         }
-
-        const selected = [];
-        for (const data of this._selected.values()) {
-            selected.push(data.color);
-        }
-
-        return this._selectTrace<string | string[] | number | number[]>(values, selected, trace);
     }
 
     /**
