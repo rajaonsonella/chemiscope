@@ -547,6 +547,7 @@ export class PropertiesMap {
                 this._options.opacity.minimum.disable()
             } else {
                 this._options.opacity.minimum.enable()
+                this._options.opacity.minimum.value = Math.max(0.0, Math.min(this._options.opacity.minimum.value, this._options.opacity.maximum.value - 0.2))
             }
             this._updateOpacity();
         };
