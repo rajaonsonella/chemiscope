@@ -559,27 +559,78 @@ export class PropertiesMap {
                 this._options.opacity.minimum.enable()
                 this._options.opacity.minimum.value = Math.max(0.0, Math.min(this._options.opacity.minimum.value, this._options.opacity.maximum.value - 0.2))
             }
-            this._updateOpacity();
+            this._updateFilter();
+            this._restyle(
+                {
+                    'marker.color': this._colors(),
+                    'marker.size': this._sizes(),
+                    'marker.symbol': this._symbols(),
+                    x: this._coordinates(this._options.x),
+                    y: this._coordinates(this._options.y),
+                    z: this._coordinates(this._options.z),
+                } as Data,
+                [0, 1, 2]
+            );
         };
 
         this._options.opacity.filter.property.onchange = () => {
-          this._updateOpacity();
+          const filterVals = this._property(this._options.opacity.filter.property.value).values
+          const average = filterVals.reduce((a, b) => a + b) / filterVals.length;
+          this._options.opacity.filter.cutoff.value = average;
+          this._updateFilter();
+          this._restyle(
+              {
+                  'marker.color': this._colors(),
+                  'marker.size': this._sizes(),
+                  'marker.symbol': this._symbols(),
+                  x: this._coordinates(this._options.x),
+                  y: this._coordinates(this._options.y),
+                  z: this._coordinates(this._options.z),
+              } as Data,
+              [0, 1, 2]
+          );
         };
 
         this._options.opacity.filter.operator.onchange = () => {
-          this._updateOpacity();
+          this._updateFilter();
+          this._restyle(
+              {
+                  'marker.color': this._colors(),
+                  'marker.size': this._sizes(),
+                  'marker.symbol': this._symbols(),
+                  x: this._coordinates(this._options.x),
+                  y: this._coordinates(this._options.y),
+                  z: this._coordinates(this._options.z),
+              } as Data,
+              [0, 1, 2]
+          );
         };
 
         this._options.opacity.filter.cutoff.onchange = () => {
-          this._updateOpacity();
+          this._updateFilter();
+          this._restyle(
+              {
+                  'marker.color': this._colors(),
+                  'marker.size': this._sizes(),
+                  'marker.symbol': this._symbols(),
+                  x: this._coordinates(this._options.x),
+                  y: this._coordinates(this._options.y),
+                  z: this._coordinates(this._options.z),
+              } as Data,
+              [0, 1, 2]
+          );
         };
 
         this._options.opacity.minimum.onchange = () => {
-          this._updateOpacity();
+          this._restyle({
+                          opacity: this._options.opacity.minimum.value,
+                        } as Data, 1);
         };
 
         this._options.opacity.maximum.onchange = () => {
-          this._updateOpacity();
+          this._restyle({
+                          opacity: this._options.opacity.maximum.value,
+                        } as Data, [0,2]);
         };
 
         // ======= markers symbols
