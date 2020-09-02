@@ -154,6 +154,12 @@ export class PropertiesMap {
     private _options: MapOptions;
     /// Button used to reset the range of color axis
     private _colorReset: HTMLButtonElement;
+    /// List of points rendered at lowest opacity.
+    /// Stored so that they only need be calculated whenever the filter changes
+    private _backgroundPoints: number[];
+    /// List of points rendered at highest opacity.
+    /// Stored so that they only need be calculated whenever the filter changes
+    private _mainPoints: number[];
 
     /**
      * Create a new [[PropertiesMap]] inside the DOM element with the given HTML
@@ -193,6 +199,10 @@ export class PropertiesMap {
             config.settings
         );
         this._colorReset = getByID<HTMLButtonElement>('chsp-color-reset');
+
+        this._mainPoints = [];
+        this._backgroundPoints = [];
+        this._updateFilter();
 
         this._connectSettings();
 
@@ -1207,41 +1217,39 @@ export class PropertiesMap {
         return check;
     }
 
-    private _filter<T>(objectToFilter: T) {
+    private _updateFilter() {
       const opacityMode = this._options.opacity.mode.value;
 
-      if(opacityMode === 'constant') {
-        return [objectToFilter, undefined]
-      } else if(opacityMode === 'filter') {
-        if(Array.isArray(objectToFilter)) {
-          const values = this._property(this._options.opacity.filter.property.value).values;
-          assert(objectToFilter.length === values.length)
+      // don't know if there's a better way to do this
+      const nIdx = this._property(this._options.opacity.filter.property.value).values.length;
+      const allIdx = [];
+      for (var i = 0; i<nIdx; i++){
+        allIdx.push(i);
+      }
 
-          const operator = this._options.opacity.filter.operator.value;
-          const cutoff = this._options.opacity.filter.cutoff.value;
+      var mP: number[] = allIdx;
+      var bP: number[] = [];
 
-          var filtered_trace;
-          var unfiltered_trace;
-          console.log(operator)
+      if(opacityMode === 'filter') {
+        const values = this._property(this._options.opacity.filter.property.value).values;
+        const operator = this._options.opacity.filter.operator.value;
+        const cutoff = this._options.opacity.filter.cutoff.value;
 
-          if(operator === '>') {
-            filtered_trace = objectToFilter.filter((x,i) => (values[i] > cutoff));
-            unfiltered_trace = objectToFilter.filter((x,i) => (values[i] <= cutoff));
-          } else if (operator === "<") {
-            filtered_trace = objectToFilter.filter((x,i) => (values[i] < cutoff));
-            unfiltered_trace = objectToFilter.filter((x,i) => (values[i] >= cutoff));
-          } else if (operator === "=") {
-            filtered_trace = objectToFilter.filter((x,i) => (values[i] === cutoff));
-            unfiltered_trace = objectToFilter.filter((x,i) => (values[i] !== cutoff));
-          } else {
-            throw Error('No other filters are supported');
-          }
-
-          return [unfiltered_trace, filtered_trace];
+        if(operator === '>') {
+          mP = allIdx.filter(i => (values[i] > cutoff));
+          bP = allIdx.filter(i => (values[i] <= cutoff));
+        } else if (operator === "<") {
+          mP = allIdx.filter(i => (values[i] < cutoff));
+          bP = allIdx.filter(i => (values[i] >= cutoff));
+        } else if (operator === "=") {
+          mP = allIdx.filter(i => (values[i] === cutoff));
+          bP = allIdx.filter(i => (values[i] !== cutoff));
         } else {
-          return [objectToFilter, objectToFilter];
+          throw Error('No other filters are supported');
         }
       }
+      this._mainPoints = mP;
+      this._backgroundPoints = bP;
     }
 
     private _updateTraces() {
