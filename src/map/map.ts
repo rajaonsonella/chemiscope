@@ -966,7 +966,11 @@ export class PropertiesMap {
     private _symbols(trace?: number): Array<string | string[] | number[]> {
         if (this._options.symbol.value === '') {
             // default to 0 (i.e. circles)
-            return this._filter<string>(['circle'], trace);
+            if (trace === undefined) {
+                return ['circle', 'circle', 'circle'];
+            } else {
+                return ['circle'];
+            }
         }
 
         const property = this._property(this._options.symbol.value);
@@ -1044,10 +1048,13 @@ export class PropertiesMap {
         }
 
         // switch all traces to 3D mode
-        this._restyle(({
-            'marker.symbol': symbols,
-            type: 'scatter3d',
-        } as unknown) as Data);
+        this._restyle(
+            ({
+                'marker.symbol': symbols,
+                type: 'scatter3d',
+            } as unknown) as Data,
+            [0, 1, 2]
+        );
 
         for (const data of this._selected.values()) {
             data.toggleVisible(false);
